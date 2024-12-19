@@ -13,15 +13,15 @@ app.use(cors());
 
 
 app.post('/application-form', (req, res) => {
-  const { username, password } = req.body;
+  const dataFromFrontEnd = req.body;
 
 
-  if (username && password) {
+  if (dataFromFrontEnd) {
     // kulang pa sa validation hahaha
-    console.log("Received data: ", { username, password });
-    res.json({ message: "Form submitted successfully" });
+    console.log("Received data: ", dataFromFrontEnd);
+    res.json({ message: "This is data from backend", dataFromFrontEnd });
   } else {
-    res.status(400).json({ message: "Invalid data" });
+    res.status(400).json({ message: "Invalid data"});
   }
 });
 

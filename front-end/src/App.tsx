@@ -6,6 +6,8 @@ import RouteNotFound from "./pages/RouteNotFound"
 import ApplicationForm from "./pages/ApplicationForm"
 import IAccount from "./types/IAccount"
 import { useState } from "react"
+import { Toaster } from "./components/ui/sonner"
+import Fool from "./pages/Fool"
 
 const App = () => {
 
@@ -17,9 +19,12 @@ const App = () => {
         <Routes>
           <Route path="/" element = {<Home />} /> 
           <Route path="/route-not-found" element = {<RouteNotFound />} /> 
-          <Route path="/filterable-product-table" element = {<FilterableProductTable accountList={accountList} />} /> 
+          <Route path="/filterable-product-table" element = {<FilterableProductTable setAccount={setAccounts} accountList={accountList} />} /> 
           <Route path="/application-form" element = {<ApplicationForm accountList={accountList} setAccounts={setAccounts}/>} /> 
+          <Route path="/fool" element = {<Fool />} /> 
+          
         </Routes>
+        <Toaster />
       </Layout>
      
     </BrowserRouter>
