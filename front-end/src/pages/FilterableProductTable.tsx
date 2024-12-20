@@ -17,57 +17,62 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogOverlay,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@radix-ui/react-label";
+import editSVG from "@/assets/filterable-product-table-edit.svg"
+import deleteSVG from "@/assets/filterable-product-table-delete.svg"
+import "@/index.css"
 
-
-interface FilterableProductTableProps{
-  accountList: IAccount[], 
-  setAccount: React.Dispatch<React.SetStateAction<IAccount[]>>
+interface FilterableProductTableProps {
+  accountList: IAccount[];
+  setAccount: React.Dispatch<React.SetStateAction<IAccount[]>>;
 }
 
 const FilterableProductTable = ({
-  accountList,setAccount
+  accountList,
+  setAccount,
 }: FilterableProductTableProps) => {
-
   const [searchQuery, setSearchQuery] = useState("");
   const [editUsername, setEditUsername] = useState("");
   const [editPassword, setEditPassword] = useState("");
-  const [editIndex, setEditIndex] = useState<number|null>(null);
+  const [editIndex, setEditIndex] = useState<number | null>(null);
   const [DialogOpen, setDialogOpen] = useState(false);
-  
-
 
   function searchHandler(e: React.ChangeEvent<HTMLInputElement>) {
     setSearchQuery(e.target.value.toLowerCase());
   }
 
-  function handleEdit(account: IAccount, index: number){
-    setEditUsername(account.username)
-    setEditPassword(account.password)
-    setEditIndex(index)
-    setDialogOpen(true)
+  function handleEdit(account: IAccount, index: number) {
+    setEditUsername(account.username);
+    setEditPassword(account.password);
+    setEditIndex(index);
+    setDialogOpen(true);
+  }
+
+  function handleDelete(index: number) {
+   const updatedAccountList = accountList.filter((_, i) => i !== index); 
+   setAccount(updatedAccountList)
+    
   }
 
   function handleSave() {
-
-    // simple validation: 
-    if(editIndex !==null){
+    // simple validation:
+    if (editIndex !== null) {
       const updatedAccountList = [...accountList];
       updatedAccountList[editIndex] = {
-        ...updatedAccountList[editIndex], 
-        username: editUsername, 
-        password: editPassword
-      }
-      setAccount(updatedAccountList)
-      setDialogOpen(!DialogOpen)
+        ...updatedAccountList[editIndex],
+        username: editUsername,
+        password: editPassword,
+      };
+      setAccount(updatedAccountList);
+      setDialogOpen(!DialogOpen);
     }
-    
-
   }
 
+  
 
 
   function productTable() {
@@ -88,13 +93,17 @@ const FilterableProductTable = ({
             {filteredAccounts.map((account, index) => (
               <TableRow key={index}>
                 <TableCell className="text-left">{account.username}</TableCell>
-                <TableCell className="text-right">{account.password}</TableCell>
-                <div className="space-x-2">
-                  <Dialog open = {DialogOpen} onOpenChange={setDialogOpen}>
+                <TableCell className="text-right ">{account.password}</TableCell>
+                <div className="flex items-center justify-center j space-x-[0.5rem] ">
+                  
+                  <Dialog open={DialogOpen} onOpenChange={setDialogOpen}>
                     <DialogTrigger asChild>
-                      <Button onClick={() => handleEdit(account, index)}>edit</Button>
+                      <Button className="inline-flex items-center justify-center p-0 " variant="ghost"  onClick={() => handleEdit(account, index)} >
+                        <img src={editSVG} alt="edit icon"  className="p-[1px]" />
+                      </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent >
+                 
                       <DialogHeader>
                         <DialogTitle>Edit Account</DialogTitle>
                         <DialogDescription>
@@ -109,7 +118,7 @@ const FilterableProductTable = ({
                           <Input
                             type="input"
                             placeholder={account.username}
-                            value={editUsername} // optional, but still working 
+                            value={editUsername} // optional, but still working
                             onChange={(e) => setEditUsername(e.target.value)}
                           ></Input>
                         </div>
@@ -129,7 +138,9 @@ const FilterableProductTable = ({
                     </DialogContent>
                   </Dialog>
 
-                  <Button variant={"destructive"}>delete</Button>
+                  <Button  onClick={() => handleDelete(index)} className="inline-flex items-center justify-center p-0" variant="ghost">
+                    <img  src={deleteSVG} alt="" />
+                  </Button>
                 </div>
               </TableRow>
             ))}

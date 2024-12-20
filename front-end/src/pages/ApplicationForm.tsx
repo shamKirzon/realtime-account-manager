@@ -35,6 +35,7 @@ const ApplicationForm = ({
   accountList,
   setAccounts,
 }: ApplicationFormProps) => {
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -60,6 +61,7 @@ const ApplicationForm = ({
         throw new Error("Failed to submit form");
       } else if (response.ok) {
         const newAccounts = {
+          
           username: username,
           password: password,
         };
