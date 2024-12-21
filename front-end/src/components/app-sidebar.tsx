@@ -21,12 +21,12 @@ const items = [
   },
   {
     title: "Filterable Names",
-    url: "/filterable-product-table",
+    url: "/filterable-names",
     icon: Filter,
   },
   {
-    title: "Application Form",
-    url: "/application-form",
+    title: "Create Account",
+    url: "/create-account",
     icon: FileText
   },
 ]

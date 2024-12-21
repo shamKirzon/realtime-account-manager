@@ -31,11 +31,10 @@ const formSchema = z.object({
     .max(30),
 });
 
-const ApplicationForm = ({
+const CreateAccount = ({
   accountList,
   setAccounts,
 }: ApplicationFormProps) => {
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,10 +45,10 @@ const ApplicationForm = ({
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
-    const { username, password } = values;
+    const {username, password} = values; 
 
     try {
-      const response = await fetch("http://localhost:5000/application-form", {
+      const response = await fetch("http://localhost:5000/api/create-account", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,14 +59,14 @@ const ApplicationForm = ({
       if (!response.ok) {
         throw new Error("Failed to submit form");
       } else if (response.ok) {
-        const newAccounts = {
-          
-          username: username,
-          password: password,
-        };
-        setAccounts([...accountList, newAccounts]);
-
         const data = await response.json();
+
+        const newAccounts = {
+          username: data.username || username, 
+          password: data.password || password, 
+        };
+
+        setAccounts([...accountList, newAccounts]);
 
         // pop-up
         toast("Form Submitted", {
@@ -78,7 +77,7 @@ const ApplicationForm = ({
           },
         });
 
-        console.log("form submitted succesfully", data);
+        console.log("backend response", data.data, data.message);
 
         form.reset();
       }
@@ -91,7 +90,10 @@ const ApplicationForm = ({
     <>
       <div className="pl-[4rem]">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 border border-grey-300 rounded-lg p-4 shadow-sm">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8 border border-grey-300 rounded-lg p-4 shadow-sm"
+          >
             <FormField
               control={form.control}
               name="username"
@@ -113,7 +115,7 @@ const ApplicationForm = ({
                   <FormLabel>Password</FormLabel>
                   <FormControl>
                     <Input
-                     className="w-[20rem]"
+                      className="w-[20rem]"
                       type="password"
                       placeholder="Enter your password"
                       {...field}
@@ -123,7 +125,7 @@ const ApplicationForm = ({
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <Button type="submit">Create</Button>
           </form>
         </Form>
       </div>
@@ -131,4 +133,4 @@ const ApplicationForm = ({
   );
 };
 
-export default ApplicationForm;
+export default CreateAccount

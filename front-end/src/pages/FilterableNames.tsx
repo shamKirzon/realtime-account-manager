@@ -26,15 +26,15 @@ import editSVG from "@/assets/filterable-product-table-edit.svg"
 import deleteSVG from "@/assets/filterable-product-table-delete.svg"
 import "@/index.css"
 
-interface FilterableProductTableProps {
+interface FilterableNamesProps {
   accountList: IAccount[];
   setAccount: React.Dispatch<React.SetStateAction<IAccount[]>>;
 }
 
-const FilterableProductTable = ({
+const FilterableNames = ({
   accountList,
   setAccount,
-}: FilterableProductTableProps) => {
+}: FilterableNamesProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [editUsername, setEditUsername] = useState("");
   const [editPassword, setEditPassword] = useState("");
@@ -169,4 +169,4 @@ const FilterableProductTable = ({
   );
 };
 
-export default FilterableProductTable;
+export default FilterableNames;
