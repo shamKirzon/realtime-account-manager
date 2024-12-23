@@ -31,10 +31,7 @@ const formSchema = z.object({
     .max(30),
 });
 
-const CreateAccount = ({
-  accountList,
-  setAccounts,
-}: ApplicationFormProps) => {
+const CreateAccount = ({ accountList, setAccounts }: ApplicationFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,8 +41,7 @@ const CreateAccount = ({
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    const {username, password} = values; 
+    console.log("front-end data: ",values);
 
     try {
       const response = await fetch("http://localhost:5000/api/create-account", {
@@ -59,30 +55,36 @@ const CreateAccount = ({
       if (!response.ok) {
         throw new Error("Failed to submit form");
       } else if (response.ok) {
-        const data = await response.json();
+        try{
+          const data = await response.json();
+       
+          const newAccounts = {
+            id: data.id,
+            username: data.username,
+            password: data.password,
+          };
 
-        const newAccounts = {
-          username: data.username || username, 
-          password: data.password || password, 
-        };
-
-        setAccounts([...accountList, newAccounts]);
-
-        // pop-up
-        toast("Form Submitted", {
-          description: new Date().toLocaleString(),
-          action: {
-            label: "Undo",
-            onClick: () => console.log("Undo"),
-          },
-        });
-
-        console.log("backend response", data.data, data.message);
-
-        form.reset();
+          setAccounts([...accountList, newAccounts]);
+  
+          // pop-up
+          toast("Form Submitted", {
+            description: new Date().toLocaleString(),
+            action: {
+              label: "Undo",
+              onClick: () => console.log("Undo"),
+            },
+          });
+  
+          console.log("backend response", data.id, data.message);
+  
+          form.reset();
+        }catch(err){
+          console.error("failed to display " + err)
+          
+        }
       }
     } catch (err) {
-      console.error("Failed to submit form ");
+      console.error("Failed connection to back-end ");
     }
   }
 
@@ -133,4 +135,4 @@ const CreateAccount = ({
   );
 };
 
-export default CreateAccount
+export default CreateAccount;

@@ -22,58 +22,75 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@radix-ui/react-label";
-import editSVG from "@/assets/filterable-product-table-edit.svg"
-import deleteSVG from "@/assets/filterable-product-table-delete.svg"
-import "@/index.css"
+import editSVG from "@/assets/filterable-product-table-edit.svg";
+import deleteSVG from "@/assets/filterable-product-table-delete.svg";
+import "@/index.css";
 
 interface FilterableNamesProps {
   accountList: IAccount[];
   setAccount: React.Dispatch<React.SetStateAction<IAccount[]>>;
 }
 
-const FilterableNames = ({
-  accountList,
-  setAccount,
-}: FilterableNamesProps) => {
+const FilterableNames = ({ accountList, setAccount }: FilterableNamesProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [editUsername, setEditUsername] = useState("");
   const [editPassword, setEditPassword] = useState("");
-  const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [id, setId] = useState("");
   const [DialogOpen, setDialogOpen] = useState(false);
 
   function searchHandler(e: React.ChangeEvent<HTMLInputElement>) {
     setSearchQuery(e.target.value.toLowerCase());
   }
 
-  function handleEdit(account: IAccount, index: number) {
+  function handleEdit(account: IAccount) {
     setEditUsername(account.username);
     setEditPassword(account.password);
-    setEditIndex(index);
+    setId(account.id);
     setDialogOpen(true);
   }
 
   function handleDelete(index: number) {
-   const updatedAccountList = accountList.filter((_, i) => i !== index); 
-   setAccount(updatedAccountList)
-    
+    const updatedAccountList = accountList.filter((_, i) => i !== index);
+    setAccount(updatedAccountList);
   }
 
-  function handleSave() {
-    // simple validation:
-    if (editIndex !== null) {
-      const updatedAccountList = [...accountList];
-      updatedAccountList[editIndex] = {
-        ...updatedAccountList[editIndex],
+  // edit - SAVE
+  async function handleSave() {
+    if (id !== null) {
+      const updatedAccountList = {
+        id,
         username: editUsername,
         password: editPassword,
       };
-      setAccount(updatedAccountList);
+      const response = await fetch(
+        `http://localhost:5000/api/edit-account/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "Application/json",
+          },
+          body: JSON.stringify(updatedAccountList),
+        }
+      );
+
+      try {
+        const data = await response.json();
+    
+        console.log(data.message)
+        
+        const updatedList = accountList.map((account) =>
+          account.id === id
+            ? { ...account, username: editUsername, password: editPassword }
+            : account
+        );
+        setAccount([...updatedList]); 
+      } catch(err) {
+        throw new  Error("No response from the backend" );
+      }
+
       setDialogOpen(!DialogOpen);
     }
   }
-
-  
-
 
   function productTable() {
     const filteredAccounts = accountList.filter((accounts) => {
@@ -93,17 +110,25 @@ const FilterableNames = ({
             {filteredAccounts.map((account, index) => (
               <TableRow key={index}>
                 <TableCell className="text-left">{account.username}</TableCell>
-                <TableCell className="text-right ">{account.password}</TableCell>
+                <TableCell className="text-right ">
+                  {account.password}
+                </TableCell>
                 <div className="flex items-center justify-center j space-x-[0.5rem] ">
-                  
                   <Dialog open={DialogOpen} onOpenChange={setDialogOpen}>
                     <DialogTrigger asChild>
-                      <Button className="inline-flex items-center justify-center p-0 " variant="ghost"  onClick={() => handleEdit(account, index)} >
-                        <img src={editSVG} alt="edit icon"  className="p-[1px]" />
+                      <Button
+                        className="inline-flex items-center justify-center p-0 "
+                        variant="ghost"
+                        onClick={() => handleEdit(account)}
+                      >
+                        <img
+                          src={editSVG}
+                          alt="edit icon"
+                          className="p-[1px]"
+                        />
                       </Button>
                     </DialogTrigger>
-                    <DialogContent >
-                 
+                    <DialogContent>
                       <DialogHeader>
                         <DialogTitle>Edit Account</DialogTitle>
                         <DialogDescription>
@@ -138,8 +163,12 @@ const FilterableNames = ({
                     </DialogContent>
                   </Dialog>
 
-                  <Button  onClick={() => handleDelete(index)} className="inline-flex items-center justify-center p-0" variant="ghost">
-                    <img  src={deleteSVG} alt="" />
+                  <Button
+                    onClick={() => handleDelete(index)}
+                    className="inline-flex items-center justify-center p-0"
+                    variant="ghost"
+                  >
+                    <img src={deleteSVG} alt="" />
                   </Button>
                 </div>
               </TableRow>
