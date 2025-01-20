@@ -75,7 +75,7 @@ const CreateAccount = ({ accountList, setAccounts }: ApplicationFormProps) => {
             },
           });
   
-          console.log("backend response", data.id, data.message);
+          console.log("z response", data.id, data.message);
   
           form.reset();
         }catch(err){

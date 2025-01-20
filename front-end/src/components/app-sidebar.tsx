@@ -1,4 +1,4 @@
-import {  Home, Filter, FileText} from "lucide-react"
+import { Home, Filter, FileText } from "lucide-react";
 
 import {
   Sidebar,
@@ -9,8 +9,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { Link } from "react-router-dom"
+} from "@/components/ui/sidebar";
+import { Link } from "react-router-dom";
 
 // Menu items.
 const items = [
@@ -27,9 +27,9 @@ const items = [
   {
     title: "Create Account",
     url: "/create-account",
-    icon: FileText
+    icon: FileText,
   },
-]
+];
 
 export function AppSidebar() {
   return (
@@ -54,5 +54,5 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }
